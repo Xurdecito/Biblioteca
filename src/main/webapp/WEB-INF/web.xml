@@ -9,4 +9,14 @@
     <welcome-file>default.jsp</welcome-file>
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
+  <servlet>
+    <description></description>
+    <display-name>BlibiotecaController</display-name>
+    <servlet-name>BlibiotecaController</servlet-name>
+    <servlet-class>controlador.BlibiotecaController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BlibiotecaController</servlet-name>
+    <url-pattern>/BlibiotecaController</url-pattern>
+  </servlet-mapping>
 </web-app>
