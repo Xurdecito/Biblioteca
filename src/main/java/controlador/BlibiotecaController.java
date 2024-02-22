@@ -6,12 +6,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import modelo.LibroDAO;
+import modelo.libro;
+
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Servlet implementation class BlibiotecaController
  */
-@WebServlet("")
+@WebServlet(urlPatterns = {"","/insertar"})
 public class BlibiotecaController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -26,14 +30,38 @@ public class BlibiotecaController extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//response.getWriter().append("Served at: ").append(request.getContextPath());
-		System.out.println("Servlet BibliotecaController");
 		RequestDispatcher despachador = null;
-		despachador = request.getServletContext().getRequestDispatcher("/index.jsp");
+		if (request.getServletPath().equals("")) {
+			 try {
+				 LibroDAO libroDAO = new LibroDAO();
+				 ArrayList<libro> libros;
+				 libros = libroDAO.getLibros();
+				 request.setAttribute("libros", libros);
+			 }catch (RuntimeException e) {
+				 request.setAttribute("error",e.getMessage());
+			 }
+			 despachador = request.getServletContext().getRequestDispatcher("/index.jsp");
+		} else if (request.getServletPath().equals("/insertar")) {
+			try {
+				LibroDAO libroDAO = new LibroDAO();
+				libro libro = new libro(Integer.parseInt(request.getParameter("isbn")),
+						request.getParameter("titulo"),request.getParameter("autor"));
+				libroDAO.insertar(libro);
+				request.setAttribute("info","Libro "+ libro+ " añadido");
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				request.setAttribute("error",e.getMessage());
+			} catch (RuntimeException e) {
+				// TODO Auto-generated catch block
+				request.setAttribute("error",e.getMessage());
+			}
+			despachador = request.getServletContext().getRequestDispatcher("/");
+		}
 		despachador.forward(request, response);
 	}
+
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
